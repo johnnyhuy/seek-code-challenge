@@ -31,3 +31,18 @@ It depends on the level of security we have at the company. Ideally production w
 ## Prometheus wasn't working by default
 
 Looked like we've missed the Prometheus dependency to actually enable the metrics endpoint.
+
+Luckily, Googling the problem solved it.
+
+## AWS and Terraform
+
+We need to provision a few things to provide scalable infrastructure as code. There are two levels of access control here. IAM access specifically for the ECS stack and operator access to provision preliminary resources like the following before the stack.
+
+- Setup Terraform backend state file storage using an S3 bucket
+- Setup an IAM user for the ECS stack
+
+Once they're setup we can use the provisioned IAM user to create the ECS stack. This will also provide a safe way to integrate access control into a CI/CD pipeline. The IAM user will be responsible for the resources it creates.
+
+## CI/CD pipelines?
+
+I hope to use GitHub actions to provide PR infrastructure deployments.
