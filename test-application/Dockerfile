@@ -1,10 +1,18 @@
 FROM docker.io/adoptopenjdk/openjdk11:alpine AS build
 
-# /tmp since it's definitely temporary
-COPY . /tmp/test-application
-
 WORKDIR /tmp/test-application
 
+# Download Gradle first to cache the tooling, useful if we're making app changes
+COPY gradle /tmp/test-application/gradle
+COPY gradlew /tmp/test-application/gradlew
+COPY build.gradle /tmp/test-application/build.gradle
+COPY settings.gradle /tmp/test-application/settings.gradle
+RUN chmod +x /tmp/test-application/gradlew
+RUN ./gradlew
+
+COPY . /tmp/test-application
+
+RUN chmod +x /tmp/test-application/gradlew
 RUN ./gradlew build
 
 # Let's keep the image as slim as possible, Alpine Linux works wonders here
