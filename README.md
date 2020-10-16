@@ -57,5 +57,5 @@ the application's d:
 
 Please create a GitHub repository and send through the link. You may make this private, if so please
 add [@scottg88](https://github.com/scottg88) and [@jcaputo79](https://github.com/jcaputo79) as collaborators.
-
+ 
 If you have any questions throughout this process you may reach out to us via the details you were provided.
