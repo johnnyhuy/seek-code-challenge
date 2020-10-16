@@ -8,14 +8,20 @@ services:
       dockerfile: Dockerfile
     ports:
       - "8080:8080"
+    environment:
+      - DS_HOST=${DS_HOST}
+      - DS_DBNAME=${DS_DBNAME}
+      - DS_USER=${DS_USER}
+      - DS_PASSWORD=${DS_PASSWORD}
+      - DS_PORT=${DS_PORT}
     depends_on:
       - database
 
   database:
     image: docker.io/postgres:13 # Its version is supported on AWS
     ports:
-      - "5432:5432"
+      - "${DS_PORT}:${DS_PORT}"
     environment:
-      - POSTGRES_PASSWORD=example
-      - POSTGRES_USER=user
-      - POSTGRES_DB=test
+      - POSTGRES_PASSWORD=${DS_PASSWORD}
+      - POSTGRES_USER=${DS_USER}
+      - POSTGRES_DB=${DS_DBNAME}
