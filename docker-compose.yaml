@@ -1,0 +1,21 @@
+version: '3.8'
+
+services:
+  app:
+    image: johnnyhuy/seek-test-application:v0.0.1 # SemVer
+    build:
+      context: test-application
+      dockerfile: test-application/Dockerfile
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+
+  database:
+    image: postgres:13 # Its version supported on AWS
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_PASSWORD=root
+      - POSTGRES_USER=root
+      - POSTGRES_DB=test_application
