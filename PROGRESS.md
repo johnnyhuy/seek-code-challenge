@@ -18,6 +18,8 @@ I went with the open source approach but I lack a fair amount of Java knowledge 
 
 Having the state of infrastructure stored somewhere can be beneficial to dictate what we want to **change**, this includes deleting, updating and creating. The alternative would be to use the cloud provider's stateless API to build a snapshot of the infrastructure to essentially try mimic what Terraform is doing with state.
 
+Another great benefit is the ability to cross between cloud providers in a single module. Need Azure and GCP setup? Or an ACME cert to be loaded into a key vault? This can all be contained and managed via providers in modules.
+
 ### Cons?
 
 Well state can become malformed and we need to take steps to ensure that the state of infrastructure does not *drift* with the reality of what's deployed in the cloud. Operators will need to know how to stateful applications similar to how database engineers require knowledge in change the state of databases.
@@ -46,3 +48,11 @@ Once they're setup we can use the provisioned IAM user to create the ECS stack. 
 ## CI/CD pipelines?
 
 I hope to use GitHub actions to provide PR infrastructure deployments.
+
+## RDS rotating secrets
+
+Did a bunch of research on how to store secrets in AWS. Rotating secrets does sound more secure, though my original approach was to use the `random_password` resource to generate a password to store in the SecretsManager resource. This would drop the feature of rotating secrets on the RDS. I will try the work towards the rotating secrets, which is only available in using AWS SecretsManager.
+
+The alternative is to use SSM with the `random_password` approach to store it and fetch it at the ECS task. Though we put the state file into scope in storing credentials. We'd still use the ARN to load it into the ECS task by the way.
+
+Introducing rotating secrets does come with more implementation in terms of applying it outside of ECS when using SecretsManager. It just depends on the ergonomics to SecretsManager from other cloud resources non-AWS and AWS. Kubernetes would be an example, I'd guess that it would have an operator deployed in the cluster to monitor SecretsManager key rotation and apply rolling deployments on downstream pods.
