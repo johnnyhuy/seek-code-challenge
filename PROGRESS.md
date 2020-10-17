@@ -13,3 +13,13 @@ If we can't replicate the stack locally, what's the point? Container stacks shou
 ## OpenJDK or Oracle JDK?
 
 I went with the open source approach but I lack a fair amount of Java knowledge given that I come from a Microsoft shop company.
+
+## Why Terraform?
+
+Having the state of infrastructure stored somewhere can be beneficial to dictate what we want to **change**, this includes deleting, updating and creating. The alternative would be to use the cloud provider's stateless API to build a snapshot of the infrastructure to essentially try mimic what Terraform is doing with state.
+
+### Cons?
+
+Well state can become malformed and we need to take steps to ensure that the state of infrastructure does not *drift* with the reality of what's deployed in the cloud. Operators will need to know how to stateful applications similar to how database engineers require knowledge in change the state of databases.
+
+This is where Terraform can be re-applied to sure the state is always the same as declared.
