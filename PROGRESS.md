@@ -8,7 +8,7 @@ Setup Docker Compose stack to ensure I can replicate the setup locally.
 
 Looked up PostgreSQL supported version on AWS before setting it up locally.
 
-If we can't replicate the stack locally, what's the point? Container stacks should be developer friendly, not robot friendly
+If we can't replicate the stack locally, what's the point? Container stacks should be developer friendly, not robot friendly.
 
 ## OpenJDK or Oracle JDK?
 
@@ -27,3 +27,7 @@ This is where Terraform can be re-applied to sure the state is always the same a
 ## Should we still use public registries like Dockerhub?
 
 It depends on the level of security we have at the company. Ideally production workloads should use private registries to act as a DMZ as it gets scanned and deployed to production environments.
+
+## Prometheus wasn't working by default
+
+Looked like we've missed the Prometheus dependency to actually enable the metrics endpoint.
