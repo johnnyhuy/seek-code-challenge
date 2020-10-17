@@ -7,7 +7,7 @@ export COMPOSE_DOCKER_CLI_BUILD=1
 build:
 	docker-compose build
 
-build:
-	docker-compose -d up
+up:
+	docker-compose up -d
 
 # TODO: Terraform apply
