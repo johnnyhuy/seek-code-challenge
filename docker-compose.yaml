@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   app:
-    image: johnnyhuy/seek-test-application:v0.0.1 # SemVer
+    image: docker.io/johnnyhuy/seek-test-application:v0.0.1 # SemVer
     build:
       context: test-application
       dockerfile: Dockerfile
@@ -12,7 +12,7 @@ services:
       - database
 
   database:
-    image: postgres:13 # Its version is supported on AWS
+    image: docker.io/postgres:13 # Its version is supported on AWS
     ports:
       - "5432:5432"
     environment:
