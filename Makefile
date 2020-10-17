@@ -14,6 +14,9 @@ sync:
 up:
 	docker-compose up -d
 
+push:
+	docker-compose push app
+
 exec:
 	docker-compose exec -it app /bin/sh
 
