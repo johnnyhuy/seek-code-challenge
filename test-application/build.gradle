@@ -29,9 +29,9 @@ dependencies {
     compile group: 'org.springframework', name: 'spring-jdbc', version: '5.2.9.RELEASE'
     compile "org.flywaydb:flyway-core:5.2.3"
 
+    compile 'io.micrometer:micrometer-registry-prometheus:latest.release'
     compile group: 'org.jdbi', name: 'jdbi3-core', version: '3.3.0'
     compile group: 'org.jdbi', name: 'jdbi3-postgres', version: '3.3.0'
     compile group: 'org.jdbi', name: 'jdbi3-sqlobject', version: '3.3.0'
     compile group: 'org.apache.commons', name: 'commons-dbcp2', version: '2.5.0'
-
 }
