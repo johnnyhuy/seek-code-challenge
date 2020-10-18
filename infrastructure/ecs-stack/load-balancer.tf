@@ -24,7 +24,7 @@ resource "aws_lb" "this" {
   depends_on = [aws_internet_gateway.this]
 
   name               = "ecs-stack-lb"
-  subnets            = [aws_subnet.a.id, aws_subnet.b.id, aws_subnet.c.id]
+  subnets            = [aws_subnet.public_a.id, aws_subnet.public_b.id, aws_subnet.public_c.id]
   load_balancer_type = "application"
   security_groups    = [aws_security_group.load_balancer.id]
 

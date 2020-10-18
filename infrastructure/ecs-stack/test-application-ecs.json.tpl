@@ -1,8 +1,16 @@
 [
   {
     "name": "test-application",
-    "image": "docker.io/johnnyhuy/seek-test-application:v0.0.1",
+    "image": "scottg88/test-application:latest",
     "essential": true,
+    "logConfiguration": {
+      "logDriver": "awslogs",
+      "options": {
+        "awslogs-region": "ap-southeast-2",
+        "awslogs-stream-prefix": "ecs",
+        "awslogs-group": "ecs-logs"
+      }
+    },
     "portMappings": [
       {
         "containerPort": 8080,
@@ -27,9 +35,7 @@
       {
         "name": "DS_PORT",
         "value": "${ds_port}"
-      }
-    ],
-    "secrets": [
+      },
       {
         "name": "DS_PASSWORD",
         "valueFrom": "${ds_password}"
