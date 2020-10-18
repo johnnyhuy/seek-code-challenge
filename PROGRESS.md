@@ -68,3 +68,9 @@ Something I've learnt when I first ran the Terraform template. We need at least 
 This ECS stack feel like similar to hosting a Kubernetes cluster, though it does feel like we're locked into the vendor at a fair amount like SecretsManager and task definitions. An argument against that is we get to fully utilise the providers features.
 
 ECS task definitions feel like Kubernetes Deployment manifests without the deployment strategy.
+
+## Troubleshooting ECS containers
+
+Looks like we have the following offers to get into an ECS instance to troubleshoot. We can SSH into the instance and dump logs or try install AWS audit tools on the container to forward logs to the CloudWatch instance.
+
+This feels fairly complex compared to viewing pod events and logs in a Kubernetes cluster via `kubectl`.

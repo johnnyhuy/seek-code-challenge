@@ -12,6 +12,12 @@ data "aws_iam_policy_document" "ecs" {
   }
 }
 
+resource "aws_cloudwatch_log_group" "ecs" {
+  name = "ecs-logs"
+
+  tags = local.tags
+}
+
 resource "aws_iam_role" "ecs" {
   name               = "ecs-execution-role"
   assume_role_policy = data.aws_iam_policy_document.ecs.json
@@ -24,31 +30,56 @@ resource "aws_iam_role_policy_attachment" "ecs" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy"
 }
 
-# resource "aws_iam_policy" "ecs_secrets" {
-#   name = "ecs-secretsmanger-get-secret-value"
+resource "aws_iam_policy" "ecs_logs" {
+  name = "ecs-logs"
 
-#   policy = <<EOF
-# {
-#   "Version": "2012-10-17",
-#   "Statement": [
-#     {
-#       "Effect": "Allow",
-#       "Action": [
-#         "secretsmanager:GetSecretValue"
-#       ],
-#       "Resource": [
-#         "${aws_secretsmanager_secret.rds.id}"
-#       ]
-#     }
-#   ]
-# }
-# EOF
-# }
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "*"
+    }
+  ]
+}
+EOF
+}
 
-# resource "aws_iam_role_policy_attachment" "ecs_secrets" {
-#   role       = aws_iam_role.ecs.name
-#   policy_arn = aws_iam_policy.ecs_secrets.arn
-# }
+resource "aws_iam_role_policy_attachment" "ecs_logs" {
+  role       = aws_iam_role.ecs.name
+  policy_arn = aws_iam_policy.ecs_logs.arn
+}
+
+resource "aws_iam_policy" "ecs_secrets" {
+  name = "ecs-secretsmanger-get-secret-value"
+
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "secretsmanager:GetSecretValue"
+      ],
+      "Resource": [
+        "${aws_secretsmanager_secret.rds.id}"
+      ]
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy_attachment" "ecs_secrets" {
+  role       = aws_iam_role.ecs.name
+  policy_arn = aws_iam_policy.ecs_secrets.arn
+}
 
 resource "aws_security_group" "ecs" {
   name        = "ecs-sg"
@@ -64,9 +95,23 @@ resource "aws_security_group" "ecs" {
   }
 
   egress {
-    protocol    = "-1"
-    from_port   = 0
-    to_port     = 0
+    protocol    = "tcp"
+    from_port   = local.database_port
+    to_port     = local.database_port
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol    = "tcp"
+    from_port   = 443
+    to_port     = 443
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    protocol    = "udp"
+    from_port   = 53
+    to_port     = 53
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -104,7 +149,7 @@ resource "aws_ecs_service" "this" {
 
   network_configuration {
     security_groups  = [aws_security_group.ecs.id]
-    subnets          = [aws_subnet.a.id, aws_subnet.b.id, aws_subnet.c.id]
+    subnets          = [aws_subnet.public_a.id, aws_subnet.public_b.id, aws_subnet.public_c.id]
     assign_public_ip = true
   }
 

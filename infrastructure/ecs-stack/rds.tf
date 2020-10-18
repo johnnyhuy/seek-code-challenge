@@ -4,27 +4,28 @@ resource "random_password" "inital_rds_password" {
 }
 
 resource "random_string" "secret" {
-  length = 4
+  length  = 4
   special = false
 }
 
 resource "aws_db_subnet_group" "this" {
   name       = "database-sg"
-  subnet_ids = [aws_subnet.a.id, aws_subnet.b.id, aws_subnet.c.id]
+  subnet_ids = [aws_subnet.private_a.id, aws_subnet.private_b.id, aws_subnet.private_c.id]
 
   tags = local.tags
 }
 
 resource "aws_db_instance" "this" {
-  allocated_storage = 20
-  storage_type      = "gp2"
-  engine            = "postgres"
-  engine_version    = "12.3"
-  instance_class    = "db.t2.micro"
-  name              = local.database_name
-  username          = local.database_username
-  password          = random_password.inital_rds_password.result
-  port              = local.database_port
+  allocated_storage   = 20
+  storage_type        = "gp2"
+  engine              = "postgres"
+  engine_version      = "12.3"
+  instance_class      = "db.t2.micro"
+  name                = local.database_name
+  username            = local.database_username
+  password            = random_password.inital_rds_password.result
+  port                = local.database_port
+  skip_final_snapshot = true
 
   tags = local.tags
 }
@@ -36,18 +37,23 @@ resource "aws_secretsmanager_secret" "rds" {
   tags = local.tags
 }
 
+# resource "aws_secretsmanager_secret_version" "rds" {
+#   secret_id     = aws_secretsmanager_secret.rds.id
+#   secret_string = <<EOF
+# {
+#   "engine": "postgres",
+#   "host": "${aws_db_instance.this.address}",
+#   "username": "${local.database_username}",
+#   "password": "${random_password.inital_rds_password.result}",
+#   "dbname": "${local.database_name}",
+#   "port": "${local.database_port}"
+# }
+# EOF
+# }
+
 resource "aws_secretsmanager_secret_version" "rds" {
   secret_id     = aws_secretsmanager_secret.rds.id
-  secret_string = <<EOF
-{
-  "engine": "postgres",
-  "host": "${aws_db_instance.this.address}",
-  "username": "${local.database_username}",
-  "password": "${random_password.inital_rds_password.result}",
-  "dbname": "${local.database_name}",
-  "port": "${local.database_port}"
-}
-EOF
+  secret_string = random_password.inital_rds_password.result
 }
 
 # TODO: rotate
