@@ -81,27 +81,6 @@ resource "aws_iam_role_policy_attachment" "ecs_secrets" {
   policy_arn = aws_iam_policy.ecs_secrets.arn
 }
 
-resource "aws_security_group" "ecs" {
-  name        = "ecs-sg"
-  description = "Alow inbound access to the ECS task."
-  vpc_id      = aws_vpc.this.id
-
-  ingress {
-    protocol        = "tcp"
-    from_port       = 8080
-    to_port         = 8080
-    cidr_blocks     = ["0.0.0.0/0"]
-    security_groups = [aws_security_group.load_balancer.id]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-}
-
 resource "aws_ecs_task_definition" "this" {
   family                   = "test-application"
   network_mode             = "awsvpc"
@@ -126,6 +105,7 @@ resource "aws_ecs_cluster" "this" {
   tags = local.tags
 }
 
+# WARNING! Before destroying, please remove any active tasks in the service otherwise the destruction process will hang and error
 resource "aws_ecs_service" "this" {
   depends_on = [aws_db_instance.this, aws_lb_listener.https_forward, aws_iam_role_policy_attachment.ecs]
 
