@@ -56,3 +56,5 @@ Did a bunch of research on how to store secrets in AWS. Rotating secrets does so
 The alternative is to use SSM with the `random_password` approach to store it and fetch it at the ECS task. Though we put the state file into scope in storing credentials. We'd still use the ARN to load it into the ECS task by the way.
 
 Introducing rotating secrets does come with more implementation in terms of applying it outside of ECS when using SecretsManager. It just depends on the ergonomics to SecretsManager from other cloud resources non-AWS and AWS. Kubernetes would be an example, I'd guess that it would have an operator deployed in the cluster to monitor SecretsManager key rotation and apply rolling deployments on downstream pods.
+
+Rotating secrets are a good idea, however this will require additional time to tune a custom lambda function to actually invoke a rotation on the AWS SecretsManager. I have relevant experiences with Azure Functions, so this should be similar. Fallback here is to drop rotating secrets in the meantime.
