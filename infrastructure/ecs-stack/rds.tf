@@ -1,6 +1,6 @@
 resource "random_password" "inital_rds_password" {
   length  = 16
-  special = true
+  special = false
 }
 
 resource "random_string" "secret" {
@@ -10,12 +10,14 @@ resource "random_string" "secret" {
 
 resource "aws_db_subnet_group" "this" {
   name       = "database-sg"
-  subnet_ids = [aws_subnet.private_a.id, aws_subnet.private_b.id, aws_subnet.private_c.id]
+  subnet_ids = [aws_subnet.public_a.id, aws_subnet.public_b.id, aws_subnet.public_c.id]
 
   tags = local.tags
 }
 
 resource "aws_db_instance" "this" {
+  depends_on = [aws_db_subnet_group.this]
+
   allocated_storage    = 20
   storage_type         = "gp2"
   engine               = "postgres"
