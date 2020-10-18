@@ -10,7 +10,7 @@ resource "random_string" "secret" {
 
 resource "aws_db_subnet_group" "this" {
   name       = "database-sg"
-  subnet_ids = [aws_subnet.public_a.id, aws_subnet.public_b.id, aws_subnet.public_c.id]
+  subnet_ids = [aws_subnet.private_a.id, aws_subnet.private_b.id, aws_subnet.private_c.id]
 
   tags = local.tags
 }
@@ -41,6 +41,12 @@ resource "aws_secretsmanager_secret" "rds" {
   tags = local.tags
 }
 
+resource "aws_secretsmanager_secret_version" "rds" {
+  secret_id     = aws_secretsmanager_secret.rds.id
+  secret_string = random_password.inital_rds_password.result
+}
+
+# TODO: rotate secrets using Hosted Lamda solution
 # resource "aws_secretsmanager_secret_version" "rds" {
 #   secret_id     = aws_secretsmanager_secret.rds.id
 #   secret_string = <<EOF
@@ -54,11 +60,6 @@ resource "aws_secretsmanager_secret" "rds" {
 # }
 # EOF
 # }
-
-resource "aws_secretsmanager_secret_version" "rds" {
-  secret_id     = aws_secretsmanager_secret.rds.id
-  secret_string = random_password.inital_rds_password.result
-}
 
 # TODO: rotate
 # resource "aws_cloudformation_stack" "secrets" {

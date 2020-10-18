@@ -5,3 +5,5 @@ Terraform RDS example from [this repo](https://github.com/terraform-aws-modules/
 Terraform RDS SecretsManager [example](https://github.com/gordonmurray/aws_rds_secrets_manager)
 
 [Reddit thread](https://www.reddit.com/r/Terraform/comments/ijavhy/help_create_secret_for_aws_rds/) on how to setup SecretsManager with RDS
+
+AWS [recommended](https://docs.aws.amazon.com/elasticloadbalancing/latest/application/load-balancer-update-security-groups.html) security group changes for load balancers.
