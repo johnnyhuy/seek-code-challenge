@@ -1,5 +1,5 @@
 locals {
-  database_username = "admin"
+  database_username = "john"
   database_name = "test"
   database_port = 5432
 

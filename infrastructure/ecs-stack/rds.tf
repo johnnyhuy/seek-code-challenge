@@ -3,29 +3,37 @@ resource "random_password" "inital_rds_password" {
   special = true
 }
 
+resource "random_string" "secret" {
+  length = 4
+  special = false
+}
+
 resource "aws_db_subnet_group" "this" {
   name       = "database-sg"
-  subnet_ids = [aws_subnet.this.id]
+  subnet_ids = [aws_subnet.a.id, aws_subnet.b.id, aws_subnet.c.id]
 
   tags = local.tags
 }
 
 resource "aws_db_instance" "this" {
-  allocated_storage    = 2
-  storage_type         = "gp2"
-  engine               = "postgres"
-  engine_version       = "13.0"
-  instance_class       = "db.t2.micro"
-  name                 = local.database_name
-  username             = local.database_username
-  password             = random_password.inital_rds_password.result
-  port = local.database_port
-  parameter_group_name = "default.postgres13.0"
+  allocated_storage = 20
+  storage_type      = "gp2"
+  engine            = "postgres"
+  engine_version    = "12.3"
+  instance_class    = "db.t2.micro"
+  name              = local.database_name
+  username          = local.database_username
+  password          = random_password.inital_rds_password.result
+  port              = local.database_port
+
+  tags = local.tags
 }
 
 resource "aws_secretsmanager_secret" "rds" {
   description = "Generate a secret for the RDS"
-  name        = "rds-secret"
+  name        = "${random_string.secret.result}-rds-secret" # when we delete secrets it takes time, we can make it unique instead
+
+  tags = local.tags
 }
 
 resource "aws_secretsmanager_secret_version" "rds" {
