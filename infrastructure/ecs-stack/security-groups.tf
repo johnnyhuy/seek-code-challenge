@@ -4,17 +4,15 @@ resource "aws_security_group" "rds" {
   vpc_id      = aws_vpc.this.id
 
   ingress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port = local.database_port
+    to_port   = local.database_port
+    protocol  = "tcp"
+    cidr_blocks = [
+      # Public subnets
+      cidrsubnet(aws_vpc.this.cidr_block, 4, 1),
+      cidrsubnet(aws_vpc.this.cidr_block, 4, 2),
+      cidrsubnet(aws_vpc.this.cidr_block, 4, 3)
+    ]
   }
 }
 
@@ -27,7 +25,6 @@ resource "aws_security_group" "ecs" {
     protocol        = "tcp"
     from_port       = 8080
     to_port         = 8080
-    cidr_blocks     = [aws_vpc.this.cidr_block]
     security_groups = [aws_security_group.load_balancer.id]
   }
 
@@ -51,11 +48,24 @@ resource "aws_security_group" "load_balancer" {
     cidr_blocks = ["0.0.0.0/0"]
   }
 
+  # TODO: HTTPS setup
+  # ingress {
+  #   protocol    = "tcp"
+  #   from_port   = 443
+  #   to_port     = 443
+  #   cidr_blocks = ["0.0.0.0/0"]
+  # }
+
   egress {
-    from_port   = 0
-    to_port     = 0
-    protocol    = "-1"
-    cidr_blocks = ["0.0.0.0/0"]
+    from_port = 8080
+    to_port   = 8080
+    protocol  = "tcp"
+    cidr_blocks = [
+      # Public subnets
+      cidrsubnet(aws_vpc.this.cidr_block, 4, 1),
+      cidrsubnet(aws_vpc.this.cidr_block, 4, 2),
+      cidrsubnet(aws_vpc.this.cidr_block, 4, 3)
+    ]
   }
 
   tags = local.tags

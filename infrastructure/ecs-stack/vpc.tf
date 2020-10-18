@@ -39,32 +39,32 @@ resource "aws_subnet" "public_c" {
   tags = local.tags
 }
 
-# resource "aws_subnet" "private_a" {
-#   availability_zone       = "ap-southeast-2a"
-#   vpc_id                  = aws_vpc.this.id
-#   map_public_ip_on_launch = false
-#   cidr_block              = cidrsubnet(aws_vpc.this.cidr_block, 4, 4)
+resource "aws_subnet" "private_a" {
+  availability_zone       = "ap-southeast-2a"
+  vpc_id                  = aws_vpc.this.id
+  map_public_ip_on_launch = false
+  cidr_block              = cidrsubnet(aws_vpc.this.cidr_block, 4, 4)
 
-#   tags = local.tags
-# }
+  tags = local.tags
+}
 
-# resource "aws_subnet" "private_b" {
-#   availability_zone       = "ap-southeast-2b"
-#   vpc_id                  = aws_vpc.this.id
-#   map_public_ip_on_launch = false
-#   cidr_block              = cidrsubnet(aws_vpc.this.cidr_block, 4, 5)
+resource "aws_subnet" "private_b" {
+  availability_zone       = "ap-southeast-2b"
+  vpc_id                  = aws_vpc.this.id
+  map_public_ip_on_launch = false
+  cidr_block              = cidrsubnet(aws_vpc.this.cidr_block, 4, 5)
 
-#   tags = local.tags
-# }
+  tags = local.tags
+}
 
-# resource "aws_subnet" "private_c" {
-#   availability_zone       = "ap-southeast-2c"
-#   vpc_id                  = aws_vpc.this.id
-#   map_public_ip_on_launch = false
-#   cidr_block              = cidrsubnet(aws_vpc.this.cidr_block, 4, 6)
+resource "aws_subnet" "private_c" {
+  availability_zone       = "ap-southeast-2c"
+  vpc_id                  = aws_vpc.this.id
+  map_public_ip_on_launch = false
+  cidr_block              = cidrsubnet(aws_vpc.this.cidr_block, 4, 6)
 
-#   tags = local.tags
-# }
+  tags = local.tags
+}
 
 resource "aws_default_route_table" "public" {
   default_route_table_id = aws_vpc.this.main_route_table_id
