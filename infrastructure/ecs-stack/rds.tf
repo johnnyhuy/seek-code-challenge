@@ -16,16 +16,17 @@ resource "aws_db_subnet_group" "this" {
 }
 
 resource "aws_db_instance" "this" {
-  allocated_storage   = 20
-  storage_type        = "gp2"
-  engine              = "postgres"
-  engine_version      = "12.3"
-  instance_class      = "db.t2.micro"
-  name                = local.database_name
-  username            = local.database_username
-  password            = random_password.inital_rds_password.result
-  port                = local.database_port
-  skip_final_snapshot = true
+  allocated_storage    = 20
+  storage_type         = "gp2"
+  engine               = "postgres"
+  engine_version       = "12.3"
+  instance_class       = "db.t2.micro"
+  name                 = local.database_name
+  username             = local.database_username
+  password             = random_password.inital_rds_password.result
+  port                 = local.database_port
+  db_subnet_group_name = "database-sg"
+  skip_final_snapshot  = true
 
   tags = local.tags
 }

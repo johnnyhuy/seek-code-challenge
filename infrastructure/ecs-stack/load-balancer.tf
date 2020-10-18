@@ -11,9 +11,9 @@ resource "aws_security_group" "load_balancer" {
   }
 
   egress {
-    protocol    = "-1"
     from_port   = 0
     to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 
@@ -50,13 +50,9 @@ resource "aws_lb_target_group" "this" {
   target_type = "ip"
 
   health_check {
-    healthy_threshold   = "3"
-    interval            = "120"
-    protocol            = "HTTP"
-    matcher             = "200-299"
-    timeout             = "20"
-    path                = "/"
-    unhealthy_threshold = "8"
+    path     = "/actuator/health"
+    protocol = "HTTP"
+    interval = 60
   }
 
   tags = local.tags
