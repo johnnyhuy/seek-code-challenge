@@ -95,23 +95,9 @@ resource "aws_security_group" "ecs" {
   }
 
   egress {
-    protocol    = "tcp"
-    from_port   = local.database_port
-    to_port     = local.database_port
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    protocol    = "tcp"
-    from_port   = 443
-    to_port     = 443
-    cidr_blocks = ["0.0.0.0/0"]
-  }
-
-  egress {
-    protocol    = "udp"
-    from_port   = 53
-    to_port     = 53
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
     cidr_blocks = ["0.0.0.0/0"]
   }
 }
@@ -141,10 +127,12 @@ resource "aws_ecs_cluster" "this" {
 }
 
 resource "aws_ecs_service" "this" {
+  depends_on = [aws_db_instance.this, aws_lb_listener.https_forward, aws_iam_role_policy_attachment.ecs]
+
   name            = "test-application"
   cluster         = aws_ecs_cluster.this.id
   task_definition = aws_ecs_task_definition.this.arn
-  desired_count   = 1
+  desired_count   = 3
   launch_type     = "FARGATE"
 
   network_configuration {
@@ -158,8 +146,6 @@ resource "aws_ecs_service" "this" {
     container_name   = "test-application"
     container_port   = 8080
   }
-
-  depends_on = [aws_lb_listener.https_forward, aws_iam_role_policy_attachment.ecs]
 
   tags = local.tags
 }
