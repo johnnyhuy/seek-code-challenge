@@ -74,3 +74,11 @@ ECS task definitions feel like Kubernetes Deployment manifests without the deplo
 Looks like we have the following offers to get into an ECS instance to troubleshoot. We can SSH into the instance and dump logs or try install AWS audit tools on the container to forward logs to the CloudWatch instance.
 
 This feels fairly complex compared to viewing pod events and logs in a Kubernetes cluster via `kubectl`.
+
+## Should app deploy be in the same lifecycle as the infrastructure we setup?
+
+The short answer would be no. Reason being is that once we run this at scale, there will be multiple applications that require the underlying infrastructure like the RDS etc. to deploy their changes. We can split out the task definition into its own Terraform module and sync changes there. The thing we'll need to manage next is the ordering of deployments between the two modules.
+
+## ECS and ACI managed container instances
+
+They're good and bad, the good part is that we get to reduce the burden of managing the underlying infrastructure to provision the container. Downside is that we're limited to the feature set provided by the cloud provider.

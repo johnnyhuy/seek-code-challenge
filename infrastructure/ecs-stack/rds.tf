@@ -8,6 +8,26 @@ resource "random_string" "secret" {
   special = false
 }
 
+resource "aws_security_group" "rds" {
+  name        = "rds-sg"
+  description = "Alow inbound access for RDS."
+  vpc_id      = aws_vpc.this.id
+
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = "-1"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+}
+
 resource "aws_db_subnet_group" "this" {
   name       = "database-sg"
   subnet_ids = [aws_subnet.public_a.id, aws_subnet.public_b.id, aws_subnet.public_c.id]
@@ -29,6 +49,7 @@ resource "aws_db_instance" "this" {
   port                 = local.database_port
   db_subnet_group_name = "database-sg"
   skip_final_snapshot  = true
+  vpc_security_group_ids = [aws_security_group.rds.id]
 
   tags = local.tags
 }
