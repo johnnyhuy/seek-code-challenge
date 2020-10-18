@@ -1,7 +1,7 @@
 [
   {
     "name": "test-application",
-    "image": "scottg88/test-application:latest",
+    "image": "docker.io/johnnyhuy/seek-test-application:v0.0.1",
     "essential": true,
     "logConfiguration": {
       "logDriver": "awslogs",
@@ -35,7 +35,9 @@
       {
         "name": "DS_PORT",
         "value": "${ds_port}"
-      },
+      }
+    ],
+    "secrets": [
       {
         "name": "DS_PASSWORD",
         "valueFrom": "${ds_password}"
