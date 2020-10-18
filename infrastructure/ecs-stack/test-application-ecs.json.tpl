@@ -14,23 +14,25 @@
     "environment": [
       {
         "name": "DS_HOST",
-        "value": "blah"
+        "value": "${ds_host}"
       },
       {
         "name": "DS_DBNAME",
-        "value": "blah"
+        "value": "${ds_dbname}"
       },
       {
         "name": "DS_USER",
-        "value": "blah"
-      },
-      {
-        "name": "DS_PASSWORD",
-        "value": "blah"
+        "value": "${ds_user}"
       },
       {
         "name": "DS_PORT",
-        "value": "blah"
+        "value": "${ds_port}"
+      }
+    ],
+    "secrets": [
+      {
+        "name": "DS_PASSWORD",
+        "valueFrom": "${ds_password}"
       }
     ],
     "ulimits": [

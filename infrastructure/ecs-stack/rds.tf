@@ -1,47 +1,56 @@
-resource "random_password" "password" {
+resource "random_password" "inital_rds_password" {
   length  = 16
   special = true
 }
 
-resource "aws_db_instance" "default" {
-  allocated_storage    = 20
+resource "aws_db_subnet_group" "this" {
+  name       = "database-sg"
+  subnet_ids = [aws_subnet.this.id]
+
+  tags = local.tags
+}
+
+resource "aws_db_instance" "this" {
+  allocated_storage    = 2
   storage_type         = "gp2"
   engine               = "postgres"
   engine_version       = "13.0"
   instance_class       = "db.t2.micro"
-  name                 = "test"
-  username             = "admin"
-  password             = "admin"
+  name                 = local.database_name
+  username             = local.database_username
+  password             = random_password.inital_rds_password.result
+  port = local.database_port
   parameter_group_name = "default.postgres13.0"
 }
 
-resource "aws_cloudformation_stack" "network" {
-  name = "networking-stack"
+resource "aws_secretsmanager_secret" "rds" {
+  description = "Generate a secret for the RDS"
+  name        = "rds-secret"
+}
 
-  parameters = {
-    VPCCidr = "10.0.0.0/16"
-  }
-
-  template_body = <<STACK
+resource "aws_secretsmanager_secret_version" "rds" {
+  secret_id     = aws_secretsmanager_secret.rds.id
+  secret_string = <<EOF
 {
-  "Parameters" : {
-    "VPCCidr" : {
-      "Type" : "String",
-      "Default" : "10.0.0.0/16",
-      "Description" : "Enter the CIDR block for the VPC. Default is 10.0.0.0/16."
-    }
-  },
-  "Resources" : {
-    "myVpc": {
-      "Type" : "AWS::EC2::VPC",
-      "Properties" : {
-        "CidrBlock" : { "Ref" : "VPCCidr" },
-        "Tags" : [
-          {"Key": "Name", "Value": "Primary_CF_VPC"}
-        ]
-      }
-    }
-  }
+  "engine": "postgres",
+  "host": "${aws_db_instance.this.address}",
+  "username": "${local.database_username}",
+  "password": "${random_password.inital_rds_password.result}",
+  "dbname": "${local.database_name}",
+  "port": "${local.database_port}"
 }
-STACK
+EOF
 }
+
+# TODO: rotate
+# resource "aws_cloudformation_stack" "secrets" {
+#   name = "secretsmanager-rotation-stack"
+
+#   parameters = {}
+#   template_body = templatefile("./test-application-ecs.json.tpl", {
+#     secret_arn
+#     rds_arn
+#     vpc_security_group_ids
+#     vpc_subnet_ids
+#   })
+# }
