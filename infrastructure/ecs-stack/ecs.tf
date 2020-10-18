@@ -15,6 +15,8 @@ data "aws_iam_policy_document" "ecs" {
 resource "aws_iam_role" "ecs" {
   name               = "ecs-execution-role"
   assume_role_policy = data.aws_iam_policy_document.ecs.json
+
+  tags = local.tags
 }
 
 resource "aws_iam_role_policy_attachment" "ecs" {
@@ -51,6 +53,7 @@ resource "aws_iam_role_policy_attachment" "ecs" {
 resource "aws_security_group" "ecs" {
   name        = "ecs-sg"
   description = "Alow inbound access to the ECS task."
+  vpc_id      = aws_vpc.this.id
 
   ingress {
     protocol        = "tcp"
@@ -80,13 +83,16 @@ resource "aws_ecs_task_definition" "this" {
     ds_port = local.database_port
     ds_user = local.database_username
     ds_dbname = local.database_name
-    ds_password = random_password.inital_rds_password.result
+    ds_password = aws_secretsmanager_secret.rds.id
   })
+
   tags = local.tags
 }
 
 resource "aws_ecs_cluster" "this" {
   name = "ecs-stack-cluster"
+
+  tags = local.tags
 }
 
 resource "aws_ecs_service" "this" {
@@ -98,7 +104,7 @@ resource "aws_ecs_service" "this" {
 
   network_configuration {
     security_groups  = [aws_security_group.ecs.id]
-    subnets          = [aws_subnet.this.id]
+    subnets          = [aws_subnet.a.id, aws_subnet.b.id, aws_subnet.c.id]
     assign_public_ip = true
   }
 

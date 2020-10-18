@@ -1,6 +1,7 @@
 resource "aws_security_group" "load_balancer" {
   name        = "load-balancer-sg"
   description = "Allow internet ingress from the load balancer."
+  vpc_id      = aws_vpc.this.id
 
   ingress {
     protocol    = "tcp"
@@ -15,11 +16,15 @@ resource "aws_security_group" "load_balancer" {
     to_port     = 0
     cidr_blocks = ["0.0.0.0/0"]
   }
+
+  tags = local.tags
 }
 
 resource "aws_lb" "this" {
+  depends_on = [aws_internet_gateway.this]
+
   name               = "ecs-stack-lb"
-  subnets            = [aws_subnet.this.id]
+  subnets            = [aws_subnet.a.id, aws_subnet.b.id, aws_subnet.c.id]
   load_balancer_type = "application"
   security_groups    = [aws_security_group.load_balancer.id]
 
@@ -53,4 +58,6 @@ resource "aws_lb_target_group" "this" {
     path                = "/"
     unhealthy_threshold = "8"
   }
+
+  tags = local.tags
 }

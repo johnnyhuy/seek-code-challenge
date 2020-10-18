@@ -18,7 +18,7 @@ services:
       - database
 
   database:
-    image: docker.io/postgres:13 # Its version is supported on AWS
+    image: docker.io/postgres:12 # Its version is supported on AWS
     ports:
       - "${DS_PORT}:${DS_PORT}"
     environment:

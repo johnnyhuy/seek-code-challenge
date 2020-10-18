@@ -58,3 +58,13 @@ The alternative is to use SSM with the `random_password` approach to store it an
 Introducing rotating secrets does come with more implementation in terms of applying it outside of ECS when using SecretsManager. It just depends on the ergonomics to SecretsManager from other cloud resources non-AWS and AWS. Kubernetes would be an example, I'd guess that it would have an operator deployed in the cluster to monitor SecretsManager key rotation and apply rolling deployments on downstream pods.
 
 Rotating secrets are a good idea, however this will require additional time to tune a custom lambda function to actually invoke a rotation on the AWS SecretsManager. I have relevant experiences with Azure Functions, so this should be similar. Fallback here is to drop rotating secrets in the meantime.
+
+## Subnet availability zones
+
+Something I've learnt when I first ran the Terraform template. We need at least 2 availability zones to setup an RDS instance in AWS. This isn't a thing in Azure.
+
+## Comparing to Kubernetes
+
+This ECS stack feel like similar to hosting a Kubernetes cluster, though it does feel like we're locked into the vendor at a fair amount like SecretsManager and task definitions. An argument against that is we get to fully utilise the providers features.
+
+ECS task definitions feel like Kubernetes Deployment manifests without the deployment strategy.
