@@ -14,6 +14,9 @@ sync:
 up:
 	docker-compose up -d
 
+down:
+	docker-compose down
+
 push:
 	docker-compose push app
 
@@ -23,4 +26,16 @@ exec:
 logs:
 	docker-compose logs app
 
-# TODO: Terraform apply
+deploy:
+	@echo WARNING! Make sure we have configured AWS CLI `aws configure`
+	cd infrastructure/ecs-stack; terraform init
+	cd infrastructure/ecs-stack; terraform apply
+
+auto-deploy:
+	cd infrastructure/ecs-stack; terraform init
+	cd infrastructure/ecs-stack; terraform apply -auto-approve
+
+destroy:
+	@echo WARNING! Make sure we delete all running ECS tasks
+	@echo Otherwise deployment will hang for a long time and fail
+	cd infrastructure/ecs-stack; terraform destory

@@ -32,13 +32,12 @@ brew install awscli terraform
 # Add the access key ID, secret & region
 aws configure
 
-cd ./infrastructure/ecs-stack
+# Use Terraform to deploy the stack
+make deploy
 
-# Download providers like AWS and prep the backend
-terraform init
-
-# This should prompt confirmation before applying the plan
-terraform apply
+# Teardown the stack
+# WARNING! Make sure there's no running ECS tasks before executing this
+make destroy
 ```
 
 Ta-da! You should have the ECS stack mentioned in this challenge.
