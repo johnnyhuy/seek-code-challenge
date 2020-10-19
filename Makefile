@@ -3,6 +3,7 @@
 export BUILDKIT_PROGRESS=plain
 export DOCKER_BUILDKIT=1
 export COMPOSE_DOCKER_CLI_BUILD=1
+export TF_LOG=ERROR
 
 build:
 	docker-compose build
@@ -27,7 +28,7 @@ logs:
 	docker-compose logs app
 
 deploy:
-	@echo WARNING! Make sure we have configured AWS CLI `aws configure`
+	@echo WARNING! Make sure we have configured AWS CLI 'aws configure'
 	cd infrastructure/ecs-stack; terraform init
 	cd infrastructure/ecs-stack; terraform apply
 
@@ -38,4 +39,4 @@ auto-deploy:
 destroy:
 	@echo WARNING! Make sure we delete all running ECS tasks
 	@echo Otherwise deployment will hang for a long time and fail
-	cd infrastructure/ecs-stack; terraform destory
+	cd infrastructure/ecs-stack; terraform destroy
