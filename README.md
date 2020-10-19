@@ -1,5 +1,86 @@
 # DevOps Coding Test
 
+## Outcome
+
+![](./images/ecs-stack.svg)
+
+Go to [progress](./PROGRESS.md) logs for my entries throughout the work done.
+
+### Time spent
+
+I've used Toggl to record my efforts as I would with any other job. Completion took about ~20 working hours, which equals ~4 business working days.
+
+![](./images/toggl.png)
+
+### Deployment
+
+We can run the following commands on Linux to get it running.
+
+#### Prerequisites
+
+- AWS credentials with an access key
+- Terraform installed
+- AWS CLI installed
+- *Money*
+
+#### Let's do it
+
+```bash
+# Let's use Homebrew to install packages (KISS)
+brew install awscli terraform
+
+# Add the access key ID, secret & region
+aws configure
+
+cd ./infrastructure/ecs-stack
+
+# Download providers like AWS and prep the backend
+terraform init
+
+# This should prompt confirmation before applying the plan
+terraform apply
+```
+
+Ta-da! You should have the ECS stack mentioned in this challenge.
+
+### Development
+
+I've containerised the application with Docker along with some quality of life tooling such as Docker Compose and Make.
+
+#### Prerequisites
+
+- Docker installed
+- Docker Compose installed
+- Make installed
+- *Some memory*
+
+#### Let's do it
+
+```bash
+# Spin up the test application locally
+make up
+
+# Toubleshoot the test application via exec'ing into the container
+make exec
+
+# Sync any changes
+make sync
+
+# Teardown
+make down
+```
+
+## What I could of had if there was more time
+
+- Use GitHub Actions to deploy this stack
+- Encrypted Terraform S3 backend
+- Use a S3 bucket to store Terraform state
+- Separate IAM user to deploy the stack instead of my own credentials
+- Rotating secrets using SecretsManager
+- Grafana and Prometheus stack setup to pull metrics from the test application - perhaps integrate Thanos for reliable Prometheus metrics
+- HTTPS enabled on through the Internet Gateway, Traefik or some sort of ingress controller perhaps?
+- **Setup the whole thing in Kubernetes, because I fucken love Kubernetes**
+
 ## Containerisation
 
 The first step of the test is to containerise the app located in the [test-application](test-application/) directory.
