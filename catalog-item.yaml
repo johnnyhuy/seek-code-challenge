@@ -1,0 +1,15 @@
+apiVersion: backstage.io/v1alpha1
+kind: Component
+metadata:
+  name: seek-code-challenge
+  title: Seek Code Challenge
+  description: Seek Code Challenge project
+  tags:
+    - terraform
+    - aws
+    - java
+    - docker
+spec:
+  type: service
+  lifecycle: experimental
+  owner: johnnyhuy
